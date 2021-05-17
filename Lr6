@@ -1,0 +1,144 @@
+#include <iostream>
+#include <list>
+#include <stdlib.h>
+using namespace std;
+
+template <typename T> class List {
+private:
+    class Element {
+    public:
+        T data;
+        Element* pNext;
+        Element* pPrev;
+
+        Element(T data = T(), Element* next_p = nullptr, Element* prev_p = nullptr) {
+            this->data = data;
+            this->pNext = next_p;
+            this->pPrev = prev_p;
+        }        
+    };
+    int l_size;      
+    Element* first;  
+    Element* last;   
+public:
+    List() { l_size = 0; first = nullptr; last = nullptr; }
+
+
+void push_back(T data) {
+    if (first == nullptr)
+        last = first = new Element(data);
+    else {
+       Element* current = new Element(data);
+       last->pNext = current;
+       current->pPrev = last;
+       last = current;
+    }
+    l_size++;
+ }
+
+void push_front(T data) {
+     last = first = new Element(data, first);
+     l_size++;
+}
+
+void Insert(T data, int index)
+{
+    if (index == 0)
+    {
+        push_front(data);
+    }
+    else
+    {
+        Element* previous = this->first;
+        for (int i = 0; i < index - 1; i++)
+        {
+            previous = previous->pNext;
+        }
+        Element* newElement = new Element(data, previous->pNext);
+        previous->pNext = newElement;
+        l_size++;
+    }
+}
+
+void pop_front()
+{
+    Element* temp = first;
+    first = first->pNext;
+    delete temp;
+    l_size--;
+}
+
+void removeAt(int index)
+{
+    if (index == 0)
+    {
+        pop_front();
+    }
+    else
+    {
+        Element* previous = this->first;
+        for (int i = 0; i < index - 1; i++)
+        {
+            previous = previous->pNext;
+        }
+        Element* toDelete = previous->pNext;
+        previous->pNext = toDelete->pNext;
+        delete toDelete;
+        l_size--;
+    }
+}
+
+void clear()
+{
+    while (l_size)
+    {
+        pop_front();
+    }
+    cout << endl << "Всі елементи списку вилучені (список очищений)." << endl;
+}
+
+T& operator [] (const int index) {
+     int counter = 0;
+     Element* current = this->first;
+     while (current) {
+        if (counter == index) return current->data;
+            current = current->pNext;
+            counter++;
+     }
+     return current->data;
+}
+
+int GetSize() { return l_size; }
+};
+
+int main() {
+    system("chcp 1251");
+    List<int> list;
+    cout << "Список:" << endl;
+    list.push_front(1);
+    list.push_back(5);
+    list.push_back(8);
+    list.push_back(7);
+    list.push_back(6);
+    list.push_back(2);
+    list.push_back(9);
+    for (int i = 0; i < list.GetSize(); i++) cout << list[i] << " ";
+    cout << endl << "Кількість елементів поточного списку: " << list.GetSize() << endl;
+
+    cout << endl << "Видалення першого елемента у списку:" << endl;
+    list.pop_front();
+    for (int i = 0; i < list.GetSize(); i++) cout << list[i] << " ";
+    cout << endl << "Кількість елементів поточного списку: " << list.GetSize() << endl;
+
+    cout << endl << "Занесення заданого елемента до списку за індексом:" << endl;
+    list.Insert(9,2);
+    for (int i = 0; i < list.GetSize(); i++) cout << list[i] << " ";
+    cout << endl << "Кількість елементів поточного списку: " << list.GetSize() << endl;
+
+    cout << endl << "Вилучення елемента зі списку за індексом:" << endl;
+    list.removeAt(4);
+    for (int i = 0; i < list.GetSize(); i++) cout << list[i] << " ";
+    cout << endl << "Кількість елементів поточного списку: " << list.GetSize() << endl;
+    list.clear();
+    return 0;
+}
